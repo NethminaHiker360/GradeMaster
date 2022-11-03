@@ -5,6 +5,8 @@ class Student{
 	String StName;
 	int PRFMarks;
 	int DBMSMarks;
+	int TotalMarks;
+	double AvgMarks;
 	
 	public boolean SearchID(Student[] ar, String STID){
 		boolean b=false;
@@ -18,31 +20,48 @@ class Student{
 		
 	}
 	
+	public void CalMarks(){
+		TotalMarks=PRFMarks+DBMSMarks;
+		AvgMarks=(double)TotalMarks/2;
+	}
 	
 	public int GetIndex(Student[] ar,String STID){
 		int index=0;
 		for (int i = 0; i <ar.length ; i++){
 			if(STID.equalsIgnoreCase(ar[i].StId)){
 				index=i;
+				break;
 			}
 		}
 		return index;
 	}
 	
+	public boolean SearchMarksAdded(){
+		if(this.PRFMarks==-1){
+			return false;
+		}
+		return true;
+		
+	}
+	
+	
 	public void PrintStudentName(){
-		System.out.print("Student Name     : "+StName);
+		System.out.print("Student Name     	: "+StName);
 	}
 	
 	public void PrintStudentDetails(){
-		System.out.println("Student ID   : "+StId);
-		System.out.println("Student Name : "+StName);
+		System.out.println("Student ID   	: "+StId);
+		System.out.println("Student Name 	: "+StName);
 	}
 	
-	public void PrintStudentAllDetails(){
-		System.out.println("\nStudent ID   : "+StId);
-		System.out.println("Student Name : "+StName);
-		System.out.println("PRF Marks    : "+PRFMarks);
-		System.out.println("DBMS Marks   : "+DBMSMarks);
+	public void PrintStudentMarks(){
+		System.out.println("PRF Marks    	: "+PRFMarks);
+		System.out.println("DBMS Marks  	: "+DBMSMarks);
+	}
+	
+	public void PrintStudentSUBMarks(){
+		System.out.println("Total Marks    	: "+TotalMarks);
+		System.out.println("Average Marks   : "+AvgMarks);
 	}
 	
 	public void UpdateStudentName(String temp){
@@ -67,9 +86,66 @@ class Student{
 		return this;
 	}
 	
+	public static void SortMarks(Student[] ar){
+		for (int i = 0; i < ar.length; i++){
+			ar[i].CalMarks();
+		}
+		
+		for (int i = ar.length-1; i >=0 ; i--){
+			for (int j = 0; j < i; j++){
+				if(ar[j].TotalMarks>ar[j+1].TotalMarks){
+					Student temp=ar[j+1];
+					ar[j+1]=ar[j];
+					ar[j]=temp;
+				}
+			}
+			
+		}
+		
+	}
+	
+	
+	public static void SortMarksPRF(Student[] ar){
+		for (int i = 0; i < ar.length; i++){
+			ar[i].CalMarks();
+		}
+		
+		for (int i = ar.length-1; i >=0 ; i--){
+			for (int j = 0; j < i; j++){
+				if(ar[j].PRFMarks>ar[j+1].PRFMarks){
+					Student temp=ar[j+1];
+					ar[j+1]=ar[j];
+					ar[j]=temp;
+				}
+			}
+			
+		}
+		
+	}
+	
+	public static void SortMarksDBMS(Student[] ar){
+		for (int i = 0; i < ar.length; i++){
+			ar[i].CalMarks();
+		}
+		
+		for (int i = ar.length-1; i >=0 ; i--){
+			for (int j = 0; j < i; j++){
+				if(ar[j].DBMSMarks>ar[j+1].DBMSMarks){
+					Student temp=ar[j+1];
+					ar[j+1]=ar[j];
+					ar[j]=temp;
+				}
+			}
+			
+		}
+		
+	}
+	
+	
+	
 }
 
-//------------------------------------------------------------
+//------------------Main Method-------------------------
 
 class Demo{
 	static Student[] Array=new Student[0];
@@ -95,10 +171,10 @@ class Demo{
 			case "4" : UpdateStudentDetails(); break;
 			case "5" : UpdateMarks(); break;
 			case "6" : DeleteStudent(); break;
-			//case "7" : PrintSTDetails(); break;
-			//case "8" : PrintSTRanks(); break;
-			//case "9" : BestinPRF(); break;
-			//case "10" : BestinDBMS(); break;
+			case "7" : PrintSTDetails(); break;
+			case "8" : PrintSTRanks(); break;
+			case "9" : BestinPRF(); break;
+			case "10" : BestinDBMS(); break;
 			default : System.out.println("Enter Correct Option : ");
 		}
 	}
@@ -218,7 +294,7 @@ class Demo{
 						DBMS=input.nextInt();
 						input.nextLine();
 						if(DBMS>100 || DBMS<0){
-							System.out.print("\nInvalid Marks. Please Enter Correct Marks : ");
+							System.out.print("\nInvalid Marks. Please Enter Correct Marks : \n");
 							continue L3;
 						}
 						break L2;
@@ -426,7 +502,8 @@ class Demo{
 							}
 						}while(true);
 					}else{
-						temp.PrintStudentAllDetails();
+						temp.PrintStudentDetails();
+						temp.PrintStudentMarks();
 						L4:do{	
 							System.out.print("\nEnter New PRF Marks : ");
 							int PRF=input.nextInt();
@@ -533,6 +610,156 @@ class Demo{
 			}while(true);
 			
 		}
+		
+	
+//----------------------------Method 7 Print Student Details-----------------	
+
+	public static void PrintSTDetails(){
+		Scanner input=new Scanner(System.in);
+			Print("PRINT STUDENT DETAILS");
+			L1: do{	
+				System.out.print("\nEnter Student ID : ");
+				String STID = input.nextLine();
+				Student temp=new Student();
+				
+				if(temp.SearchID(Array,STID)==false){
+					System.out.print("Invalid Student ID. Do you want to Search agin ( Y/N )  ");
+					L2:do{	String op1=input.nextLine();
+						if(op1.equalsIgnoreCase("Y")){
+							continue L1;
+						}else if(op1.equalsIgnoreCase("N")){
+							break L1;
+						}else{
+							System.out.print("Enter Valid Option. Do you want to Search agin ( Y/N )  ");
+							continue L2;
+						}
+					}while(true);
+				}else{
+					int index=temp.GetIndex(Array,STID);
+					temp=Array[index];
+					System.out.println();
+					temp.PrintStudentDetails();
+					if(temp.SearchMarksAdded()==false){
+						System.out.print("\n\nMarks yet to be added.\nDo you want to Search agin ( Y/N )  ");
+						L3:do{	
+							String op1=input.nextLine();
+							if(op1.equalsIgnoreCase("Y")){
+								continue L1;
+							}else if(op1.equalsIgnoreCase("N")){
+								break L1;
+							}else{
+								System.out.print("Enter Valid Option. Do you want to Search agin ( Y/N )  ");
+								continue L3;
+							}
+						}while(true);
+					}else{
+						temp.PrintStudentMarks();
+						temp.CalMarks();
+						temp.PrintStudentSUBMarks();
+						temp.SortMarks(Array);
+						index=temp.GetIndex(Array,STID);
+						System.out.print("Rank 		: "+(Array.length-index));
+						System.out.print(Array.length-index==1? "  ( First )" : Array.length-index==2? "  ( Second )" : Array.length-index==3? "  ( Third )" : "");
+						
+						System.out.print("\n\nDo you want to Search agin ( Y/N )  ");
+						L4:do{	String op1=input.nextLine();
+							if(op1.equalsIgnoreCase("Y")){
+								continue L1;
+							}else if(op1.equalsIgnoreCase("N")){
+								break L1;
+							}else{
+								System.out.print("Enter Valid Option. Do you want to Search agin ( Y/N )  ");
+								continue L4;
+							}
+						}while(true);
+					}
+				}
+			}while(true);
+		
+	}
+
+//------------------------Method 8 - Print Student Ranks---------------
+
+	public static void PrintSTRanks(){
+		Scanner input=new Scanner(System.in);
+		Print("PRINT STUEDNTS' RANK");
+		Student temp=new Student();
+		temp.SortMarks(Array);
+		System.out.print("\n\n|Rank|\t\t"+"|ID|\t\t"+"|Name|\t\t"+"|Total Marks|\t\t"+"|Average Marks|\n");
+		for (int i = Array.length-1,j=1; i >= 0; i--,j++){
+			if(Array[i].PRFMarks==-1){
+				break;
+			}else{
+				System.out.println(j+"\t\t"+Array[i].StId+"\t\t"+Array[i].StName+"\t\t\t"+Array[i].TotalMarks+"\t\t\t"+Array[i].AvgMarks);
+			}	
+		}
+		do{
+			System.out.print("\nDo you want to go back main menu ( Y/N ) ");
+			String op=input.nextLine();
+			if(op.equalsIgnoreCase("Y")){
+				break;
+			}else{
+				continue;
+			}
+		}while(true);
+		
+	}
+	
+	
+//-----------------------------	Method 9 - Best in Programming Fundemental-------------------
+
+	public static void BestinPRF(){
+		Scanner input=new Scanner(System.in);
+		Print("BEST IN PROGRAMMING FUNDEMENTALS");
+		Student temp=new Student();
+		System.out.print("\n\n|ID|\t\t"+"|Name|\t\t"+"|PRF Marks|\t\t|"+"DBMS Marks|\n");
+		temp.SortMarksPRF(Array);
+		for (int i = Array.length-1; i >=0 ; i--){
+			if(Array[i].PRFMarks==-1){
+				break;
+			}else{
+				System.out.println(" "+Array[i].StId+"\t\t    "+Array[i].StName+"\t\t  "+Array[i].PRFMarks+"\t\t\t   "+Array[i].DBMSMarks);
+			}
+		}
+		do{
+			System.out.print("\nDo you want to go back main menu ( Y/N ) ");
+			String op=input.nextLine();
+			if(op.equalsIgnoreCase("Y")){
+				break;
+			}else{
+				continue;
+			}
+		}while(true);
+		
+	}
+	
+	
+//-----------------------------	Method 10 - Best in Database Managment System-------------------
+
+	public static void BestinDBMS(){
+		Scanner input=new Scanner(System.in);
+		Print("BEST IN DATABASE MANAGEMENT SYSTEM");
+		Student temp=new Student();
+		System.out.print("\n\n|ID|\t\t"+"|Name|\t\t"+"|DBMS Marks|\t\t|"+"PRF Marks|\n");
+		temp.SortMarksDBMS(Array);
+		for (int i = Array.length-1; i >=0 ; i--){
+			if(Array[i].DBMSMarks==-1){
+				break;
+			}else{
+				System.out.println(" "+Array[i].StId+"\t\t    "+Array[i].StName+"\t\t  "+Array[i].DBMSMarks+"\t\t\t   "+Array[i].PRFMarks);
+			}
+		}
+		do{
+			System.out.print("\nDo you want to go back main menu ( Y/N ) ");
+			String op=input.nextLine();
+			if(op.equalsIgnoreCase("Y")){
+				break;
+			}else{
+				continue;
+			}
+		}while(true);
+		
+	}	
 		
 	
 //-------------------------Console Clear-----------------------------	
